@@ -1,0 +1,21 @@
+/* Styles pour les demandes de contact reçues par le candidat */
+:host {
+    display: block;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rounded-3xl {
+    border-radius: 1.5rem;
+}
+
+.hover\:border-indigo-200:hover {
+    border-color: #c7d2fe;
+}

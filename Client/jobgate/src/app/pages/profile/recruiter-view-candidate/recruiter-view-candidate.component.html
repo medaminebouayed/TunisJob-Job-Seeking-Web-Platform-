@@ -1,0 +1,161 @@
+<app-header-recruteur></app-header-recruteur>
+
+<!-- Page Header -->
+<div class="bg-white border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <div class="mb-6">
+      <app-breadcrumb [items]="breadcrumbs"></app-breadcrumb>
+    </div>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+      <div class="flex items-center gap-6">
+        <div class="w-20 h-20 rounded-2xl bg-indigo-50 flex items-center justify-center p-1 border border-indigo-100 shadow-sm overflow-hidden">
+          <img [src]="profileImageUrl || 'assets/images/default-avatar.jpg'" alt="" class="w-full h-full object-cover">
+        </div>
+        <div>
+          <h1 class="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mb-3">{{ candidate.prenom }} {{ candidate.nom }}</h1>
+          <div class="flex flex-wrap items-center gap-4 text-sm font-bold">
+            <span class="text-indigo-600 flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+              {{ candidate.titre_profil || 'Profil Talent' }}
+            </span>
+            <span class="text-gray-200">|</span>
+            <span class="flex items-center text-gray-500 gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path></svg>
+              {{ candidate.adresse }}
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex flex-wrap gap-3">
+        <a *ngIf="getPdfUrl()" [href]="getPdfUrl()" target="_blank" class="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-indigo-100 transition transform hover:-translate-y-1 active:scale-95 flex items-center gap-3">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          Voir PDF
+        </a>
+        <div *ngIf="candidature" class="px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl flex flex-col justify-center">
+          <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none mb-1">Postulé le</p>
+          <p class="text-sm font-black text-gray-700 leading-none">{{ candidature?.created_at | date:'mediumDate' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="min-h-screen bg-gray-50 py-12 px-4 md:px-12 lg:px-24">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column: Synthese, Experiences, Formations -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Synthese -->
+        <section class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+          <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
+            <span class="w-2 h-8 bg-indigo-600 rounded-full"></span>
+            À propos du candidat
+          </h2>
+          <p class="text-gray-600 leading-relaxed whitespace-pre-wrap">{{ primaryCv?.synthese_profil || "Aucune synthèse rédigée." }}</p>
+        </section>
+
+        <!-- Experiences -->
+        <section class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+          <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
+            <span class="w-2 h-8 bg-blue-500 rounded-full"></span>
+            Expériences Professionnelles
+          </h2>
+          <div *ngIf="!primaryCv?.experiences_pro?.length" class="text-gray-400 italic">Aucune expérience renseignée.</div>
+          <div class="space-y-8 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
+            <div *ngFor="let exp of primaryCv?.experiences_pro" class="relative pl-12">
+              <div class="absolute left-0 top-1.5 w-8 h-8 rounded-xl bg-white border-2 border-blue-500 flex items-center justify-center z-10">
+                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+              </div>
+              <h3 class="text-lg font-bold text-gray-900">{{ exp.titre_poste }}</h3>
+              <p class="text-blue-600 font-bold text-sm mb-2">{{ exp.nom_employeur }} <span *ngIf="exp.ville_pays">({{ exp.ville_pays }})</span></p>
+              <p class="text-xs text-gray-400 font-bold mb-3">
+                {{ exp.date_debut | date:'MMM yyyy' }} — {{ exp.poste_actuelle ? "Aujourd'hui" : (exp.date_fin | date:'MMM yyyy') }}
+              </p>
+              <p class="text-sm text-gray-600 leading-relaxed">{{ exp.description }}</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Formations -->
+        <section class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+          <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
+            <span class="w-2 h-8 bg-purple-500 rounded-full"></span>
+            Diplômes & Formations
+          </h2>
+          <div *ngIf="!primaryCv?.formations?.length" class="text-gray-400 italic">Aucune formation renseignée.</div>
+          <div class="space-y-8 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
+            <div *ngFor="let form of primaryCv?.formations" class="relative pl-12">
+              <div class="absolute left-0 top-1.5 w-8 h-8 rounded-xl bg-white border-2 border-purple-500 flex items-center justify-center z-10">
+                <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+              </div>
+              <h3 class="text-lg font-bold text-gray-900">{{ form.nom_diplome }}</h3>
+              <p class="text-purple-600 font-bold text-sm mb-2">{{ form.etablissement }} <span *ngIf="form.ville_pays">({{ form.ville_pays }})</span></p>
+              <p class="text-xs text-gray-400 font-bold mb-3">
+                {{ form.date_debut | date:'yyyy' }} — {{ form.date_fin | date:'yyyy' }}
+              </p>
+              <p class="text-sm text-gray-600 leading-relaxed">{{ form.description }}</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Skills, Languages -->
+      <div class="space-y-8">
+        <!-- Competences -->
+        <section class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+          <h2 class="text-lg font-black text-gray-900 mb-6">Compétences</h2>
+          <div *ngIf="!primaryCv?.competences?.length" class="text-gray-400 italic text-sm">Aucune compétence listée.</div>
+          <div class="space-y-4">
+            <div *ngFor="let skill of primaryCv?.competences">
+              <div class="flex justify-between text-xs font-bold mb-1.5">
+                <span class="text-gray-700 uppercase tracking-wider">{{ skill.nom_competence }}</span>
+                <span class="text-indigo-600">{{ skill.niveau_maitrise }}%</span>
+              </div>
+              <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-indigo-600 rounded-full" [style.width.%]="skill.niveau_maitrise"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Langues -->
+        <section class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+          <h2 class="text-lg font-black text-gray-900 mb-6">Langues</h2>
+          <div *ngIf="!primaryCv?.langues?.length" class="text-gray-400 italic text-sm">Aucune langue listée.</div>
+          <div class="divide-y divide-gray-100">
+            <div *ngFor="let lang of primaryCv?.langues" class="py-4 first:pt-0 last:pb-0">
+              <h4 class="font-bold text-gray-900 mb-2">{{ lang.nom_langue }}</h4>
+              <div class="flex gap-2">
+                <span class="px-2 py-0.5 bg-gray-50 text-[10px] font-bold text-gray-500 rounded border border-gray-100 uppercase">Lu: {{ lang.niveau_lu }}</span>
+                <span class="px-2 py-0.5 bg-gray-50 text-[10px] font-bold text-gray-500 rounded border border-gray-100 uppercase">Écrit: {{ lang.niveau_ecrit }}</span>
+                <span class="px-2 py-0.5 bg-gray-50 text-[10px] font-bold text-gray-500 rounded border border-gray-100 uppercase">Parlé: {{ lang.niveau_parle }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Social / Links -->
+        <section class="bg-indigo-900 rounded-3xl p-8 text-white shadow-xl shadow-indigo-100">
+          <h2 class="text-lg font-black mb-6">Liens & Réseaux</h2>
+          <div class="space-y-4">
+            <a *ngIf="candidate.url_linkedin" [href]="formatUrl(candidate.url_linkedin)" target="_blank" class="flex items-center gap-3 p-3 bg-white/10 rounded-2xl hover:bg-white/20 transition">
+              <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-indigo-300" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.238 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </div>
+              <span class="text-sm font-bold">LinkedIn</span>
+            </a>
+            <a *ngIf="candidate.url_portfolio" [href]="formatUrl(candidate.url_portfolio)" target="_blank" class="flex items-center gap-3 p-3 bg-white/10 rounded-2xl hover:bg-white/20 transition">
+              <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+              </div>
+              <span class="text-sm font-bold">Portfolio</span>
+            </a>
+            <div *ngIf="!candidate.url_linkedin && !candidate.url_portfolio" class="text-white/40 italic text-sm">Aucun lien renseigné.</div>
+          </div>
+        </section>
+      </div>
+  </div>
+</div>
+
+<app-footer-recruteur></app-footer-recruteur>

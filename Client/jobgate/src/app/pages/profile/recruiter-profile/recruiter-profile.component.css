@@ -1,0 +1,23 @@
+.animate-in {
+  animation: slide-up 0.4s ease-out;
+}
+
+@keyframes slide-up {
+  from { transform: translate(-50%, 20px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+input:focus, textarea:focus {
+  outline: none;
+}
+
+/* Glassmorphism for sticky bar */
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.shadow-indigo-200 {
+  --tw-shadow: 0 20px 25px -5px rgba(165, 180, 252, 0.4), 0 10px 10px -5px rgba(165, 180, 252, 0.2);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}

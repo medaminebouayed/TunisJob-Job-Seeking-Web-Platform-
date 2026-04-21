@@ -1,0 +1,65 @@
+<app-header-candidat></app-header-candidat>
+
+<!-- Page Header -->
+<div class="bg-white border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <div class="mb-6">
+      <app-breadcrumb [items]="breadcrumbs"></app-breadcrumb>
+    </div>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">Demandes de Contact</h1>
+        <p class="text-gray-500 mt-3 text-lg font-medium">Découvrez les entreprises qui s'intéressent à votre profil</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="min-h-screen bg-gray-50 py-10 px-4 md:px-12 lg:px-24">
+  <div class="max-w-5xl mx-auto">
+
+    <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+    </div>
+
+    <div *ngIf="!isLoading && requests.length === 0" class="bg-white rounded-3xl p-20 text-center border border-dashed border-gray-200">
+      <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+      </div>
+      <h3 class="text-xl font-bold text-gray-900">Aucune demande pour l'instant</h3>
+      <p class="text-gray-500 mt-2">Votre profil est visible par les recruteurs. Gardez-le à jour pour attirer l'attention !</p>
+    </div>
+
+    <div *ngIf="!isLoading && requests.length > 0" class="space-y-4">
+      <div *ngFor="let req of requests" class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-6 hover:border-indigo-200 transition-colors">
+        
+        <div class="w-20 h-20 rounded-2xl bg-gray-50 p-2 border border-gray-100 flex-shrink-0">
+          <img [src]="getLogo(req)" class="w-full h-full object-contain">
+        </div>
+
+        <div class="flex-1 text-center md:text-left">
+          <h3 class="text-xl font-bold text-gray-900 mb-1">{{ req.recruiter?.enterprise?.nom_entreprise }}</h3>
+          <p class="text-indigo-600 font-bold text-sm mb-3">
+            {{ req.recruiter?.user?.name }} • {{ req.recruiter?.fonction_entreprise }}
+          </p>
+          <div *ngIf="req.message" class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-sm text-gray-600 italic">
+            "{{ req.message }}"
+          </div>
+          <p *ngIf="!req.message" class="text-sm text-gray-400 italic">L'entreprise a exprimé un intérêt pour votre profil.</p>
+        </div>
+
+        <div class="flex flex-col items-center md:items-end gap-2">
+           <span class="text-xs text-gray-400 font-bold uppercase tracking-widest">{{ req.created_at | date:'mediumDate' }}</span>
+           <div class="flex gap-2 mt-2">
+             <a [routerLink]="['/company', req.recruiter?.enterprise?.id]" class="px-6 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl hover:bg-indigo-700 transition">
+               Voir l'entreprise
+             </a>
+           </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<app-footer-candidat></app-footer-candidat>

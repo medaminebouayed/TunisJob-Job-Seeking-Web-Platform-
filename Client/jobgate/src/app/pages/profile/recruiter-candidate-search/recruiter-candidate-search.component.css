@@ -1,0 +1,23 @@
+/* Styles pour la recherche de candidats par le recruteur */
+:host {
+    display: block;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* On peut ajouter ici des surcharges de design spécifiques non couvertes par Tailwind */
+.rounded-3xl {
+    border-radius: 1.5rem;
+}
+
+.shadow-xl {
+    --tw-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}

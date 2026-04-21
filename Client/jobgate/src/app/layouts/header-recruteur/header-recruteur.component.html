@@ -1,0 +1,67 @@
+<header class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
+
+    <!-- Left: Logo & Navigation -->
+    <div class="flex items-center space-x-8">
+      <!-- Logo -->
+      <a routerLink="/recruiter/dashboard" class="flex items-center flex-shrink-0 group">
+        <img src="assets/images/jobgate.png" alt="TunisJob"
+          class="h-16 w-auto drop-shadow-sm transition-transform group-hover:scale-105 duration-300">
+        <span
+          class="hidden sm:inline-block ml-3 px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-black uppercase tracking-widest rounded-md border border-indigo-100">
+          Recruteur
+        </span>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-1">
+        <a routerLink="/recruiter/dashboard" routerLinkActive="bg-indigo-50 !text-indigo-700 font-bold"
+          [routerLinkActiveOptions]="{exact: true}"
+          class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-all">
+          Tableau de Bord
+        </a>
+        <a routerLink="/recruiter/candidate-search" routerLinkActive="bg-indigo-50 !text-indigo-700 font-bold"
+          class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-all">
+          Candidatures
+        </a>
+        <a routerLink="/recruiter/company/edit" routerLinkActive="bg-indigo-50 !text-indigo-700 font-bold"
+          class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-all">
+          Ma Société
+        </a>
+        <a routerLink="/recruiter/profile" routerLinkActive="bg-indigo-50 !text-indigo-700 font-bold"
+          class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-all">
+          Mon Profil
+        </a>
+      </nav>
+    </div>
+
+    <!-- Right: Actions -->
+    <div class="flex items-center space-x-4">
+      <!-- Notification Bell -->
+
+
+      <!-- User Menu -->
+      <div class="flex items-center space-x-3" *ngIf="authService.role$ | async as role">
+        <ng-container *ngIf="role !== 'Guest'">
+          <div class="flex items-center space-x-3 pl-3 border-l border-gray-200">
+            <div class="flex items-center space-x-2">
+              <div
+                class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md">
+                {{ role.charAt(0) }}
+              </div>
+              <span class="text-sm font-medium text-gray-700 hidden sm:inline">{{ role }}</span>
+            </div>
+            <button (click)="logout()"
+              class="p-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-all"
+              title="Déconnexion">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+              </svg>
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</header>

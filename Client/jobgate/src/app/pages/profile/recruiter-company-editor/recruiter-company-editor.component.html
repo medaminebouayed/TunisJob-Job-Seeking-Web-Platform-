@@ -1,0 +1,246 @@
+<app-header-recruteur></app-header-recruteur>
+
+<!-- Page Header -->
+<div class="bg-white border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <div class="mb-6">
+      <app-breadcrumb [items]="breadcrumbs"></app-breadcrumb>
+    </div>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">Paramètres Entreprise</h1>
+        <p class="text-gray-500 mt-3 text-lg font-medium">Gérez l'identité et le profil public de votre organisation</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button *ngIf="!isEditing && !isLoading" (click)="toggleEdit()" 
+                class="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+          Modifier Profil
+        </button>
+        <button *ngIf="isEditing" (click)="cancelEdit()" 
+                class="px-8 py-4 bg-gray-50 text-gray-700 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-100 transition text-sm">
+          Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  
+  <!-- Loading Skeleton -->
+  <div *ngIf="isLoading" class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-pulse">
+    <div class="lg:col-span-1 space-y-6">
+       <div class="bg-white rounded-3xl h-80 border border-gray-100 shadow-sm"></div>
+    </div>
+    <div class="lg:col-span-2 space-y-6">
+       <div class="bg-white rounded-3xl h-64 border border-gray-100 shadow-sm"></div>
+       <div class="bg-white rounded-3xl h-96 border border-gray-100 shadow-sm"></div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left Sidebar: Identity & Brand -->
+    <div class="lg:col-span-1 space-y-8">
+      <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm sticky top-24">
+        <div class="text-center mb-8">
+          <div class="relative inline-block group mb-6">
+            <div class="w-32 h-32 rounded-3xl bg-gray-50 flex items-center justify-center p-4 border-2 border-dashed border-gray-200 group-hover:border-indigo-300 transition-colors overflow-hidden">
+              <img [src]="company.logo_url || 'https://ui-avatars.com/api/?name=' + company.nom_entreprise + '&background=f3f4f6&color=4f46e5'" 
+                   alt="Logo" class="max-w-full max-h-full object-contain mix-blend-multiply">
+              
+              <!-- Upload Overlay (Only in edit mode) -->
+              <div *ngIf="isEditing && !isUploading" (click)="logoInput.click()" class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer">
+                <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="text-[10px] font-black uppercase tracking-widest">Changer</span>
+              </div>
+
+              <!-- Uploading Spinner -->
+              <div *ngIf="isUploading" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+                <svg class="animate-spin h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              </div>
+            </div>
+            <input #logoInput type="file" (change)="onLogoSelected($event)" accept="image/*" class="hidden">
+          </div>
+
+          <h2 class="text-2xl font-black text-gray-900 mb-1">{{ company.nom_entreprise }}</h2>
+          <p class="text-indigo-600 font-bold text-sm tracking-wide">{{ company.secteur_activite || 'Secteur non défini' }}</p>
+        </div>
+
+        <div class="space-y-4 pt-6 border-t border-gray-50">
+          <div class="flex items-center justify-between py-2">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Complétion</span>
+            <span class="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">{{ completionPercentage }}%</span>
+          </div>
+          <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+             <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" [style.width.%]="completionPercentage"></div>
+          </div>
+        </div>
+
+        <div *ngIf="!isEditing" class="mt-8 space-y-3">
+          <a [href]="company.site_web" target="_blank" class="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl text-xs font-bold text-gray-600 hover:bg-gray-100 transition truncate">
+            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+            {{ company.site_web || 'Site web non renseigné' }}
+          </a>
+          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl text-xs font-bold text-gray-600">
+            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path></svg>
+            {{ company.ville_siege }}, {{ company.adresse_siege }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Content: Form or Summary -->
+    <div class="lg:col-span-2 space-y-8">
+      
+      <form #companyForm="ngForm" (ngSubmit)="save()" class="space-y-8">
+        
+        <!-- Descriptive Info -->
+        <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+          <h3 class="text-xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-sm">📝</span>
+            Présentation
+          </h3>
+          
+          <div class="space-y-6">
+            <div *ngIf="!isEditing" class="prose prose-sm max-w-none text-gray-600 leading-relaxed italic border-l-4 border-orange-100 pl-6 py-2">
+              {{ company.description || 'Aucune description disponible pour le moment.' }}
+            </div>
+
+            <div *ngIf="isEditing">
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">À propos de l'entreprise</label>
+              <textarea name="description" [(ngModel)]="company.description" rows="6" 
+                        class="w-full text-sm border border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all"
+                        placeholder="Racontez votre histoire..."></textarea>
+              <p class="text-[10px] text-gray-400 mt-2 font-medium">Une description inspirante attire 40% de candidats en plus.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+          <h3 class="text-xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">🏢</span>
+            Informations Structurelles
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Nom -->
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Nom Commercial</label>
+              <input *ngIf="isEditing" type="text" name="nom_entreprise" [(ngModel)]="company.nom_entreprise" required
+                     class="w-full text-sm border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all">
+              <p *ngIf="!isEditing" class="text-lg font-bold text-gray-800">{{ company.nom_entreprise }}</p>
+            </div>
+
+            <!-- Secteur -->
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Secteur d'Activité</label>
+              <input *ngIf="isEditing" type="text" name="secteur_activite" [(ngModel)]="company.secteur_activite"
+                     class="w-full text-sm border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all">
+              <p *ngIf="!isEditing" class="text-lg font-bold text-gray-800">{{ company.secteur_activite || '-' }}</p>
+            </div>
+
+            <!-- Taille -->
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Effectif estimé</label>
+              <div *ngIf="isEditing" class="relative group">
+                <input type="number" name="taille_effectif" [(ngModel)]="company.taille_effectif"
+                       class="w-full text-sm border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all">
+                <span class="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs uppercase tracking-widest">Employés</span>
+              </div>
+              <p *ngIf="!isEditing" class="text-lg font-bold text-gray-800">{{ company.taille_effectif || '-' }} Employés</p>
+            </div>
+
+            <!-- Site Web -->
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Lien Institutionnel</label>
+              <input *ngIf="isEditing" type="text" name="site_web" [(ngModel)]="company.site_web"
+                     class="w-full text-sm border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all"
+                     placeholder="www.entreprise.com">
+              <p *ngIf="!isEditing" class="text-lg font-bold text-gray-800 text-indigo-600">{{ company.site_web || '-' }}</p>
+            </div>
+
+            <!-- Siret -->
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Matricule Fiscal / Siret</label>
+              <input *ngIf="isEditing" type="text" name="siret_ou_matricule_fiscal" [(ngModel)]="company.siret_ou_matricule_fiscal"
+                     class="w-full text-sm border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all">
+              <p *ngIf="!isEditing" class="text-lg font-bold text-gray-800">{{ company.siret_ou_matricule_fiscal || '-' }}</p>
+            </div>
+
+             <!-- Creation -->
+             <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Année de Fondation</label>
+              <input *ngIf="isEditing" type="number" name="annee_creation" [(ngModel)]="company.annee_creation"
+                     class="w-full text-sm border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all">
+              <p *ngIf="!isEditing" class="text-lg font-bold text-gray-800">{{ company.annee_creation || '-' }}</p>
+            </div>
+
+            <!-- Banner URL (Branding) -->
+            <div class="md:col-span-2">
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">URL de la Bannière</label>
+              <input *ngIf="isEditing" type="text" name="banniere_url" [(ngModel)]="company.banniere_url"
+                     class="w-full text-sm border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all"
+                     placeholder="Ex: https://images.com/banner.jpg">
+              <div *ngIf="!isEditing && company.banniere_url" class="mt-2 rounded-xl overflow-hidden h-32 border border-gray-100">
+                <img [src]="company.banniere_url" alt="Banner" class="w-full h-full object-cover">
+              </div>
+              <p *ngIf="!isEditing && !company.banniere_url" class="text-sm italic text-gray-400">Aucune bannière configurée</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location Grid -->
+        <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+          <h3 class="text-xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">📍</span>
+            Siège Social & Localisation
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="md:col-span-2">
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Adresse Complète</label>
+              <input *ngIf="isEditing" type="text" name="adresse_siege" [(ngModel)]="company.adresse_siege"
+                     class="w-full text-sm border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all">
+              <p *ngIf="!isEditing" class="text-lg font-bold text-gray-800">{{ company.adresse_siege || 'Adresse non renseignée' }}</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Ville / Région</label>
+              <input *ngIf="isEditing" type="text" name="ville_siege" [(ngModel)]="company.ville_siege"
+                     class="w-full text-sm border-gray-100 bg-gray-50 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white py-4 px-6 transition-all">
+              <p *ngIf="!isEditing" class="text-lg font-bold text-gray-800">{{ company.ville_siege || '-' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky Form Actions (Visibility of System Status & Closure) -->
+        <div *ngIf="isEditing" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div class="bg-gray-900/90 backdrop-blur-xl rounded-2xl px-8 py-4 shadow-2xl flex items-center gap-6 border border-white/10 ring-1 ring-black/5">
+            <div class="hidden sm:block">
+               <p class="text-white font-bold text-sm">Changements non enregistrés</p>
+               <p class="text-gray-400 text-[10px] font-medium">Les modifications ne sont pas encore publiques.</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <button type="button" (click)="cancelEdit()" class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold text-xs transition duration-200">
+                Annuler
+              </button>
+              <button type="submit" [disabled]="isSaving || !companyForm.valid" 
+                      class="px-8 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold text-xs transition duration-200 flex items-center gap-2 shadow-lg shadow-indigo-500/20 disabled:opacity-50">
+                <svg *ngIf="isSaving" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                Publier les modifications
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-footer-recruteur></app-footer-recruteur>

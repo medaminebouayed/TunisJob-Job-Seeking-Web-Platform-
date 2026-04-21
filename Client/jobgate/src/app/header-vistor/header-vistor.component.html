@@ -1,0 +1,40 @@
+<header class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
+    <!-- Left: Logo & Navigation -->
+    <div class="flex items-center space-x-8">
+      <!-- Logo -->
+      <a routerLink="/home" class="flex items-center flex-shrink-0 group">
+        <img src="assets/images/jobgate.png" alt="JobGate"
+          class="h-16 w-auto drop-shadow-sm transition-transform group-hover:scale-105 duration-300">
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-1">
+        <a routerLink="/home" routerLinkActive="bg-indigo-50 !text-indigo-700 font-bold"
+          class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-all">
+          Accueil
+        </a>
+        <a routerLink="/jobs" routerLinkActive="bg-indigo-50 !text-indigo-700 font-bold"
+          class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-all">
+          Offres d'emploi
+        </a>
+        <a routerLink="/companies" routerLinkActive="bg-indigo-50 !text-indigo-700 font-bold"
+          class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-all">
+          Les Entreprises
+        </a>
+      </nav>
+    </div>
+
+    <!-- Right: Auth Actions -->
+    <div class="flex items-center space-x-3">
+      <a routerLink="/login"
+        class="px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors">
+        Connexion
+      </a>
+      <a routerLink="/login/recruteur"
+        class="px-6 py-2.5 text-sm font-bold bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg hover:shadow-lg hover:shadow-indigo-600/30 transition-all">
+        Recruteur
+      </a>
+    </div>
+  </div>
+</header>

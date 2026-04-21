@@ -1,0 +1,174 @@
+<ng-container *ngIf="authService.role$ | async as role">
+  <app-header-candidat *ngIf="role === 'Candidate'"></app-header-candidat>
+  <app-header-vistor *ngIf="role === 'Guest'"></app-header-vistor>
+  <app-header-recruteur *ngIf="role === 'Recruiter' || role === 'Admin'"></app-header-recruteur>
+
+<!-- Page Header -->
+<div class="bg-indigo-50 border-b border-indigo-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+      <app-breadcrumb [items]="breadcrumbs"></app-breadcrumb>
+    </div>
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Candidature</h1>
+        <p class="text-gray-600 mt-1">{{ job?.titre_poste }} - {{ job?.entreprise?.nom_entreprise }}</p>
+      </div>
+      <a routerLink="/jobs"
+        class="hidden md:block px-4 py-2 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-colors font-medium">
+        ← Retour aux Offres
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="px-4 md:px-12 lg:px-24 xl:px-48 py-12 bg-gray-50 min-h-screen">
+  <div class="max-w-4xl mx-auto">
+    <div class="mb-10 text-center">
+      <h1 class="text-3xl font-black text-gray-900 mb-2">Postuler pour le poste</h1>
+      <p class="text-indigo-600 font-bold">{{ job?.titre_poste }} chez {{ job?.entreprise?.nom_entreprise }}</p>
+    </div>
+
+    <div class="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-sm">
+      <div class="space-y-10">
+        <!-- Profile Choice -->
+        <section>
+          <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <span
+              class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">1</span>
+            Informations de profil
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="relative flex flex-col p-6 rounded-2xl border-2 cursor-pointer transition-all"
+              [ngClass]="useDefaultProfile ? 'border-indigo-600 bg-indigo-50/30' : 'border-gray-100 hover:border-gray-200'">
+              <input type="radio" name="profile" [value]="true" [(ngModel)]="useDefaultProfile" class="hidden">
+              <span class="font-bold text-gray-900 mb-1">Utiliser mon profil par défaut</span>
+              <span class="text-xs text-gray-500">Votre CV et vos informations actuelles seront envoyés.</span>
+              <div *ngIf="useDefaultProfile" class="absolute top-4 right-4 text-indigo-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"></path>
+                </svg>
+              </div>
+            </label>
+            <label class="relative flex flex-col p-6 rounded-2xl border-2 cursor-pointer transition-all"
+              [ngClass]="!useDefaultProfile ? 'border-indigo-600 bg-indigo-50/30' : 'border-gray-100 hover:border-gray-200'">
+              <input type="radio" name="profile" [value]="false" [(ngModel)]="useDefaultProfile" class="hidden">
+              <span class="font-bold text-gray-900 mb-1">Personnaliser ma candidature</span>
+              <span class="text-xs text-gray-500">Ajoutez une lettre de motivation et un CV spécifique.</span>
+              <div *ngIf="!useDefaultProfile" class="absolute top-4 right-4 text-indigo-600">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"></path>
+                </svg>
+              </div>
+            </label>
+          </div>
+
+          <!-- Alert for incomplete profile -->
+          <div *ngIf="useDefaultProfile && isProfileIncomplete && !isProfileLoading"
+            class="mt-6 p-5 bg-red-50 border border-red-100 rounded-2xl flex items-start gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div class="mt-1 text-red-500 bg-white p-2 rounded-xl shadow-sm">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                </path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-red-900">Votre profil est insuffisant</p>
+              <p class="text-xs text-red-700 mt-1 leading-relaxed">
+                Le recruteur risque de rejeter votre candidature s'il n'a accès à aucune expérience ou diplôme.
+                <strong>Plus de 50% de complétion est requis</strong> pour cette option.
+              </p>
+              <a routerLink="/candidate/profile"
+                class="inline-flex items-center mt-3 text-xs font-bold text-red-600 hover:text-red-700 transition-colors bg-white px-3 py-1.5 rounded-lg shadow-sm border border-red-100">
+                <span>Compléter mon profil</span>
+                <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <div *ngIf="!useDefaultProfile" class="space-y-10 animate-in fade-in slide-in-from-top-4 duration-300">
+          <section>
+            <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <span
+                class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">2</span>
+              Lettre de motivation
+            </h2>
+            <textarea [(ngModel)]="lettreMotivation" rows="6"
+              placeholder="Expliquez pourquoi vous êtes le candidat idéal..."
+              class="w-full rounded-2xl border-gray-100 bg-gray-50/50 p-6 text-gray-700 outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"></textarea>
+          </section>
+
+          <section>
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <span
+                  class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">3</span>
+                Curriculum Vitae (CV)
+              </h2>
+              <div class="flex bg-gray-100 p-1 rounded-xl">
+                <button (click)="cvType = 'link'" [ngClass]="cvType === 'link' ? 'bg-white shadow-sm' : 'text-gray-400'"
+                  class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all">Lien URL</button>
+                <button (click)="cvType = 'upload'"
+                  [ngClass]="cvType === 'upload' ? 'bg-white shadow-sm' : 'text-gray-400'"
+                  class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all">Télécharger</button>
+              </div>
+            </div>
+
+            <div *ngIf="cvType === 'link'">
+              <input type="text" [(ngModel)]="cvUrl" placeholder="https://votre-cv.com/pdf"
+                class="w-full rounded-2xl border-gray-100 bg-gray-50/50 p-4 text-gray-700 outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all">
+            </div>
+
+            <div *ngIf="cvType === 'upload'" (click)="fileInput.click()"
+              class="border-2 border-dashed border-gray-200 rounded-3xl p-12 text-center hover:border-indigo-300 transition-colors cursor-pointer group bg-gray-50/30">
+              <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" accept=".pdf">
+              <div
+                class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+              </div>
+              <p class="font-bold text-gray-900 mb-1">{{ selectedFileName || 'Cliquer pour télécharger' }}</p>
+              <p class="text-xs text-gray-400">PDF (Max. 5MB)</p>
+            </div>
+          </section>
+        </div>
+
+        <div class="pt-6 flex gap-4">
+          <button routerLink="/jobs"
+            class="flex-1 py-4 rounded-2xl font-bold text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 transition">Annuler</button>
+          <button (click)="submitApplication()"
+            [disabled]="(useDefaultProfile && isProfileIncomplete) || isProfileLoading"
+            [ngClass]="(useDefaultProfile && isProfileIncomplete) || isProfileLoading ? 'bg-gray-300 text-white shadow-none cursor-not-allowed' : 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 hover:bg-indigo-700 transform hover:-translate-y-0.5'"
+            class="flex-[2] py-4 rounded-2xl font-bold transition">
+            <span *ngIf="!isProfileLoading">Envoyer ma candidature</span>
+            <span *ngIf="isProfileLoading" class="flex items-center justify-center gap-2">
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
+              Vérification...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <app-footer-candidat *ngIf="role === 'Candidate'"></app-footer-candidat>
+  <app-footer-vistor *ngIf="role === 'Guest'"></app-footer-vistor>
+  <app-footer-recruteur *ngIf="role === 'Recruiter' || role === 'Admin'"></app-footer-recruteur>
+</ng-container>

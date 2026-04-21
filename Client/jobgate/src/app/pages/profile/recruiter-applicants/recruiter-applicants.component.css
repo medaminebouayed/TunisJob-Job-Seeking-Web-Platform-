@@ -1,0 +1,34 @@
+.animate-in {
+  animation: slide-up 0.4s ease-out;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+/* Custom shadow for emerald/rose buttons */
+.shadow-emerald-200 {
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
+}
+
+.shadow-rose-200 {
+  box-shadow: 0 10px 15px -3px rgba(244, 63, 94, 0.2);
+}
+
+/* Glassmorphism utility */
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Status transition */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}

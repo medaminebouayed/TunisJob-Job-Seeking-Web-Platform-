@@ -1,0 +1,214 @@
+<ng-container *ngIf="authService.role$ | async as role">
+  <app-header-candidat *ngIf="role === 'Candidate'"></app-header-candidat>
+  <app-header-vistor *ngIf="role === 'Guest'"></app-header-vistor>
+  <app-header-recruteur *ngIf="role === 'Recruiter' || role === 'Admin'"></app-header-recruteur>
+
+<!-- Page Header -->
+<div class="bg-white border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <div class="mb-6">
+      <app-breadcrumb [items]="breadcrumbs"></app-breadcrumb>
+    </div>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">Entreprises</h1>
+        <p class="text-gray-500 mt-3 text-lg font-medium">Découvrez les employeurs les plus innovants en Tunisie</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a routerLink="/jobs" class="inline-flex items-center px-8 py-4 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-2xl transition-all font-bold text-sm border border-indigo-100/50 shadow-sm">
+          Voir les Offres
+          <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-screen-2xl mx-auto px-4 md:px-8 lg:px-12 xl:px-16 py-12 h-full w-full">
+    <!-- Content Grid -->
+    <div class="flex flex-col lg:flex-row gap-8">
+
+      <!-- Sidebar Filters (Placeholder) -->
+      <div class="w-full lg:w-1/4 flex-shrink-0 space-y-6">
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="text-gray-900 font-bold mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+              </path>
+            </svg>
+            Filter Companies
+          </h3>
+
+          <!-- Industry Filter -->
+          <div class="mb-6">
+            <label class="block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wider">Industry</label>
+            <input type="text" [(ngModel)]="selectedSector" (input)="onFilterChange()"
+              placeholder="e.g. Technology"
+              class="w-full text-sm border-gray-200 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition px-4 py-2 bg-slate-50 focus:bg-white">
+          </div>
+
+          <!-- City Filter -->
+          <div class="mb-6">
+            <label class="block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wider">City</label>
+            <input type="text" [(ngModel)]="selectedCity" (input)="onFilterChange()"
+              placeholder="e.g. Tunis"
+              class="w-full text-sm border-gray-200 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition px-4 py-2 bg-slate-50 focus:bg-white">
+          </div>
+
+          <!-- Size Filter -->
+          <div class="mb-6">
+            <label class="block text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wider">Company Size</label>
+            <div class="space-y-2">
+              <label class="flex items-center cursor-pointer group">
+                <input type="radio" name="size" value="" [(ngModel)]="selectedSize" (change)="onFilterChange()"
+                  class="text-indigo-600 focus:ring-indigo-500">
+                <span class="ml-3 text-sm text-gray-600 group-hover:text-indigo-700 transition">Any Size</span>
+              </label>
+              <label class="flex items-center cursor-pointer group">
+                <input type="radio" name="size" value="1-50" [(ngModel)]="selectedSize" (change)="onFilterChange()"
+                  class="text-indigo-600 focus:ring-indigo-500">
+                <span class="ml-3 text-sm text-gray-600 group-hover:text-indigo-700 transition">Small (1-50)</span>
+              </label>
+              <label class="flex items-center cursor-pointer group">
+                <input type="radio" name="size" value="51-200" [(ngModel)]="selectedSize" (change)="onFilterChange()"
+                  class="text-indigo-600 focus:ring-indigo-500">
+                <span class="ml-3 text-sm text-gray-600 group-hover:text-indigo-700 transition">Medium (51-200)</span>
+              </label>
+              <label class="flex items-center cursor-pointer group">
+                <input type="radio" name="size" value="201-500" [(ngModel)]="selectedSize" (change)="onFilterChange()"
+                  class="text-indigo-600 focus:ring-indigo-500">
+                <span class="ml-3 text-sm text-gray-600 group-hover:text-indigo-700 transition">Large (201-500)</span>
+              </label>
+              <label class="flex items-center cursor-pointer group">
+                <input type="radio" name="size" value="500+" [(ngModel)]="selectedSize" (change)="onFilterChange()"
+                  class="text-indigo-600 focus:ring-indigo-500">
+                <span class="ml-3 text-sm text-gray-600 group-hover:text-indigo-700 transition">Enterprise (500+)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Listing -->
+      <div class="w-full lg:w-3/4">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-bold text-gray-900">Recommended for you</h2>
+          <div class="flex items-center">
+            <span class="text-sm text-gray-500 mr-2">Sort by:</span>
+            <select [(ngModel)]="sortBy" (change)="onFilterChange()"
+              class="text-sm border-gray-200 rounded-lg shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 font-medium text-gray-700">
+              <option value="recent">Inscrit récemment</option>
+              <option value="name">Nom (A-Z)</option>
+              <option value="size_desc">Taille (Effectif)</option>
+              <option value="offers_count">Plus d'offres</option>
+            </select>
+          </div>
+        </div>
+
+        <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
+          <div *ngFor="let _ of [1,2,3,4,5,6]" class="bg-white rounded-2xl border border-gray-100 h-80"></div>
+        </div>
+
+        <p *ngIf="!isLoading && companiesRes && companiesRes.total > 0" class="text-sm text-gray-500 mb-4">
+          Page <span class="font-semibold text-gray-800">{{ companiesRes.current_page }}</span>
+          sur <span class="font-semibold text-gray-800">{{ companiesRes.last_page }}</span>
+          · <span class="font-semibold text-gray-800">{{ companiesRes.total }}</span> entreprise(s)
+          <span *ngIf="companiesRes.from != null && companiesRes.to != null" class="hidden sm:inline">
+            ({{ companiesRes.from }}–{{ companiesRes.to }})
+          </span>
+        </p>
+
+        <div *ngIf="!isLoading && companiesRes && companiesRes.data?.length === 0" class="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
+          <p class="text-gray-600 font-medium">Aucune entreprise ne correspond à vos critères.</p>
+        </div>
+
+        <!-- Companies Grid -->
+        <div *ngIf="!isLoading && companiesRes?.data?.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <div *ngFor="let company of companiesRes?.data"
+            class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition duration-200 cursor-pointer group flex flex-col"
+            (click)="goToCompany(company.id)">
+
+            <!-- Cover Image -->
+            <div class="h-32 bg-gray-200 relative w-full overflow-hidden">
+              <!-- Use a mock banner fallback if none provided -->
+              <img
+                [src]="company.banniere_url || 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'"
+                alt="Company cover" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
+            </div>
+
+            <div class="p-6 pt-0 relative flex-grow flex flex-col">
+              <!-- Logo Floating -->
+              <div
+                class="w-16 h-16 rounded-xl bg-white shadow-md border border-gray-100 flex items-center justify-center p-2 absolute -top-8 left-6">
+                <img *ngIf="company.logo_url" [src]="company.logo_url" alt="Logo"
+                  class="max-w-full max-h-full object-contain">
+                <span *ngIf="!company.logo_url" class="font-bold text-gray-400">{{ company.nom_entreprise.charAt(0)
+                  }}</span>
+              </div>
+
+              <div class="mt-10 mb-4">
+                <h3 class="text-xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition">{{
+                  company.nom_entreprise }}</h3>
+                <p class="text-sm text-gray-500 font-medium flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  {{ company.ville_siege }} &bull; {{ company.secteur_activite }}
+                </p>
+              </div>
+
+              <p class="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-6 flex-grow">
+                {{ company.description || 'Innovative company shaping the future of ' + company.secteur_activite + '.' }}
+              </p>
+
+              <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                <div class="flex items-center space-x-2 text-xs font-semibold text-gray-700">
+                  <span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md">{{ company.taille_effectif }}
+                    Employees</span>
+                </div>
+                <span class="text-indigo-600 text-sm font-bold flex items-center group-hover:translate-x-1 transition">
+                  View Jobs
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Pagination (6 par page, côté API) -->
+        <div *ngIf="!isLoading && companiesRes && companiesRes.last_page > 1" class="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4">
+          <nav class="flex flex-wrap items-center justify-center gap-1" aria-label="Pagination des entreprises">
+            <button type="button" (click)="onPageChange(currentPage - 1)"
+                    [disabled]="currentPage === 1"
+                    class="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium">
+              ← Précédent
+            </button>
+            <button type="button" *ngFor="let p of getPageNumbers()"
+                    (click)="onPageChange(p)"
+                    [ngClass]="currentPage === p ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'border-gray-300 text-gray-700 hover:bg-gray-50'"
+                    class="min-w-[2.5rem] px-3 py-2 rounded-lg border text-sm font-semibold transition-all">
+              {{ p }}
+            </button>
+            <button type="button" (click)="onPageChange(currentPage + 1)"
+                    [disabled]="currentPage === companiesRes.last_page"
+                    class="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium">
+              Suivant →
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-footer-candidat *ngIf="role === 'Candidate'"></app-footer-candidat>
+  <app-footer-vistor *ngIf="role === 'Guest'"></app-footer-vistor>
+  <app-footer-recruteur *ngIf="role === 'Recruiter' || role === 'Admin'"></app-footer-recruteur>
+</ng-container>

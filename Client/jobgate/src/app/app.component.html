@@ -1,0 +1,13 @@
+<app-toast></app-toast>
+<ng-container *ngIf="authService.role$ | async as role">
+
+  <!-- Dynamic Header -->
+
+  <!-- Main View -->
+  <main class="min-h-[75vh]">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Dynamic Footer -->
+
+</ng-container>

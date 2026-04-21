@@ -1,0 +1,22 @@
+.animate-in {
+  animation: slide-up 0.4s ease-out;
+}
+
+@keyframes slide-up {
+  from { transform: translate(-50%, 20px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.prose {
+  line-height: 1.8;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+}
+
+/* Glassmorphism for sticky bar */
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
